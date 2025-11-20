@@ -13,6 +13,7 @@ Hệ thống quản lý nhà hàng toàn diện được xây dựng bằng Java
 - [Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
 - [Cài đặt](#-cài-đặt)
 - [Cấu hình](#-cấu-hình)
+- [Tính năng nổi bật](#-tính-năng-nổi-bât)
 - [Sử dụng](#-sử-dụng)
 - [Tài liệu](#-tài-liệu)
 
