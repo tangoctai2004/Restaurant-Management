@@ -25,7 +25,6 @@ Hệ thống quản lý nhà hàng toàn diện được xây dựng bằng Java
 ### 👥 Dành cho Khách hàng
 - ✅ **Đăng ký/Đăng nhập** - Quản lý tài khoản cá nhân
 - ✅ **Xem thực đơn** - Duyệt món ăn theo danh mục
-- ✅ **Giỏ hàng** - Thêm món, cập nhật số lượng, xóa món
 - ✅ **Đặt hàng** - Đặt món ăn và thanh toán trực tuyến
 - ✅ **Đặt bàn** - Đặt bàn trước với thanh toán tiền cọc qua VNPay
 - ✅ **Lịch sử đơn hàng** - Xem lại các đơn hàng đã đặt

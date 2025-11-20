@@ -1,0 +1,21 @@
+# Config files chứa thông tin nhạy cảm
+src/java/config/database.properties
+src/java/config/vnpay.properties
+
+# Build files
+build/
+dist/
+*.war
+*.class
+
+# IDE files
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# OS files
+.DS_Store
+Thumbs.db
+

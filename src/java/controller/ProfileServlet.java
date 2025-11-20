@@ -2,6 +2,7 @@ package controller;
 
 import dao.AccountDAO;
 import model.Account;
+import util.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -82,7 +83,8 @@ public class ProfileServlet extends HttpServlet {
                 return;
             }
             
-            account.setPassword(newPassword); // Trong thực tế nên hash password
+            // Password sẽ được hash trong updateAccount method
+            account.setPassword(newPassword);
         }
         
         // Cập nhật vào database
@@ -114,7 +116,12 @@ public class ProfileServlet extends HttpServlet {
             ps.setString(3, account.getPhone());
             
             if (changePassword) {
-                ps.setString(4, account.getPassword());
+                // Hash password trước khi lưu
+                String hashedPassword = PasswordUtil.hashPassword(account.getPassword());
+                if (hashedPassword == null) {
+                    return false;
+                }
+                ps.setString(4, hashedPassword);
                 ps.setInt(5, account.getId());
             } else {
                 ps.setInt(4, account.getId());

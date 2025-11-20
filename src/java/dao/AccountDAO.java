@@ -2,6 +2,7 @@ package dao;
 
 import model.Account;
 import model.Permission;
+import util.PasswordUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,27 +10,40 @@ import java.util.List;
 public class AccountDAO {
     
     public Account login(String username, String password) {
-        String sql = "SELECT * FROM Accounts WHERE username = ? AND password = ? AND is_active = 1";
+        String sql = "SELECT * FROM Accounts WHERE username = ? AND is_active = 1";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, username);
-            ps.setString(2, password);
-            
             ResultSet rs = ps.executeQuery();
+            
             if (rs.next()) {
-                Account account = new Account();
-                account.setId(rs.getInt("id"));
-                account.setUsername(rs.getString("username"));
-                account.setPassword(rs.getString("password"));
-                account.setFullName(rs.getString("full_name"));
-                account.setEmail(rs.getString("email"));
-                account.setPhone(rs.getString("phone"));
-                account.setRole(rs.getInt("role"));
-                account.setActive(rs.getBoolean("is_active"));
-                account.setCreatedAt(rs.getDate("created_at"));
+                String storedPassword = rs.getString("password");
                 
-                return account;
+                // Kiểm tra password với PasswordUtil (hỗ trợ cả plaintext cũ và hash mới)
+                boolean passwordMatch = false;
+                if (PasswordUtil.isHashed(storedPassword)) {
+                    // Password đã được hash
+                    passwordMatch = PasswordUtil.checkPassword(password, storedPassword);
+                } else {
+                    // Password cũ chưa hash (để tương thích với dữ liệu cũ)
+                    passwordMatch = storedPassword != null && storedPassword.equals(password);
+                }
+                
+                if (passwordMatch) {
+                    Account account = new Account();
+                    account.setId(rs.getInt("id"));
+                    account.setUsername(rs.getString("username"));
+                    account.setPassword(storedPassword); // Lưu hash, không lưu plaintext
+                    account.setFullName(rs.getString("full_name"));
+                    account.setEmail(rs.getString("email"));
+                    account.setPhone(rs.getString("phone"));
+                    account.setRole(rs.getInt("role"));
+                    account.setActive(rs.getBoolean("is_active"));
+                    account.setCreatedAt(rs.getDate("created_at"));
+                    
+                    return account;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,6 +108,12 @@ public class AccountDAO {
     public boolean register(Account account) {
         // account.getRole() giờ là role_id từ Roles table
         Integer roleId = account.getRole();
+        
+        // Nếu roleId null hoặc 0, mặc định là Khách hàng (role_id = 1)
+        if (roleId == null || roleId == 0) {
+            roleId = 1; // Khách hàng
+        }
+        
         int legacyRole = 0; // Mặc định là khách hàng
         
         // Xác định legacy role dựa trên role_id
@@ -109,20 +129,40 @@ public class AccountDAO {
             legacyRole = 2; // Nhân viên hoặc role tùy chỉnh
         }
         
+        // Hash password trước khi lưu
+        String hashedPassword = PasswordUtil.hashPassword(account.getPassword());
+        if (hashedPassword == null) {
+            System.err.println("❌ Lỗi: Không thể hash password!");
+            return false;
+        }
+        
         String sql = "INSERT INTO Accounts (username, password, full_name, email, phone, role, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
+            if (conn == null) {
+                System.err.println("❌ Lỗi: Không thể kết nối database!");
+                return false;
+            }
+            
             ps.setString(1, account.getUsername());
-            ps.setString(2, account.getPassword());
+            ps.setString(2, hashedPassword); // Lưu hash, không lưu plaintext
             ps.setString(3, account.getFullName());
             ps.setString(4, account.getEmail());
             ps.setString(5, account.getPhone());
             ps.setInt(6, legacyRole);
             ps.setInt(7, roleId);
             
-            return ps.executeUpdate() > 0;
+            int result = ps.executeUpdate();
+            if (result > 0) {
+                System.out.println("✅ Đăng ký thành công: " + account.getUsername());
+                return true;
+            } else {
+                System.err.println("❌ Không thể insert vào database!");
+                return false;
+            }
         } catch (SQLException e) {
+            System.err.println("❌ Lỗi SQL khi đăng ký: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -376,7 +416,14 @@ public class AccountDAO {
             ps.setString(paramIndex++, account.getUsername());
             
             if (account.getPassword() != null && !account.getPassword().trim().isEmpty()) {
-                ps.setString(paramIndex++, account.getPassword());
+                // Hash password mới trước khi lưu
+                String hashedPassword = PasswordUtil.hashPassword(account.getPassword());
+                if (hashedPassword != null) {
+                    ps.setString(paramIndex++, hashedPassword);
+                } else {
+                    // Nếu hash thất bại, không cập nhật password
+                    return false;
+                }
             }
             
             ps.setString(paramIndex++, account.getFullName());

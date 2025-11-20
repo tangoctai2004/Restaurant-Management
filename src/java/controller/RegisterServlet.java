@@ -52,11 +52,11 @@ public class RegisterServlet extends HttpServlet {
         
         Account account = new Account();
         account.setUsername(username);
-        account.setPassword(password); // Trong thực tế nên hash password
+        account.setPassword(password); // Password sẽ được hash trong AccountDAO.register()
         account.setFullName(fullName);
         account.setEmail(email);
         account.setPhone(phone);
-        account.setRole(0); // User
+        account.setRole(1); // role_id = 1 là Khách hàng trong Roles table
         account.setActive(true);
         
         if (accountDAO.register(account)) {

@@ -1,6 +1,7 @@
 package util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -11,13 +12,61 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class VNPayUtil {
     
-    // Cấu hình VNPay (thay đổi theo thông tin thực tế)
-    private static final String vnp_Version = "2.1.0";
-    private static final String vnp_Command = "pay";
-    private static final String vnp_TmnCode = "PVEVPRMW"; // Mã website của bạn
-    private static final String vnp_HashSecret = "840SCE1GSH34TQSJ2CK3AQ8J5UBIPC5F"; // Secret key
-    private static final String vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    private static final String vnp_ReturnUrl = "http://localhost:9999/HAH-Restaurant/vnpay-return";
+    // Cấu hình VNPay - Load từ file properties
+    private static String vnp_Version;
+    private static String vnp_Command;
+    private static String vnp_TmnCode;
+    private static String vnp_HashSecret;
+    private static String vnp_Url;
+    private static String vnp_ReturnUrl;
+    
+    // Load config từ file properties
+    static {
+        loadConfig();
+    }
+    
+    private static void loadConfig() {
+        Properties props = new Properties();
+        try (InputStream input = VNPayUtil.class.getClassLoader()
+                .getResourceAsStream("config/vnpay.properties")) {
+            
+            if (input == null) {
+                System.err.println("⚠️ Không tìm thấy file vnpay.properties!");
+                System.err.println("⚠️ Sử dụng giá trị mặc định (cần cấu hình lại!)");
+                // Fallback values (cần thay đổi)
+                vnp_Version = "2.1.0";
+                vnp_Command = "pay";
+                vnp_TmnCode = "your_tmn_code_here";
+                vnp_HashSecret = "your_hash_secret_here";
+                vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+                vnp_ReturnUrl = "http://localhost:8080/HAH-Restaurant/vnpay-return";
+                return;
+            }
+            
+            props.load(input);
+            vnp_Version = props.getProperty("vnpay.version", "2.1.0");
+            vnp_Command = props.getProperty("vnpay.command", "pay");
+            vnp_TmnCode = props.getProperty("vnpay.tmncode");
+            vnp_HashSecret = props.getProperty("vnpay.hashsecret");
+            vnp_Url = props.getProperty("vnpay.url", "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html");
+            vnp_ReturnUrl = props.getProperty("vnpay.returnurl", "http://localhost:8080/HAH-Restaurant/vnpay-return");
+            
+            if (vnp_TmnCode == null || vnp_HashSecret == null) {
+                System.err.println("⚠️ Thiếu thông tin cấu hình VNPay trong vnpay.properties!");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("❌ Lỗi khi đọc file config VNPay: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback values
+            vnp_Version = "2.1.0";
+            vnp_Command = "pay";
+            vnp_TmnCode = "your_tmn_code_here";
+            vnp_HashSecret = "your_hash_secret_here";
+            vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+            vnp_ReturnUrl = "http://localhost:8080/HAH-Restaurant/vnpay-return";
+        }
+    }
     
     public static String createPaymentUrl(HttpServletRequest request, long amount, String orderInfo, String orderId) {
         try {
