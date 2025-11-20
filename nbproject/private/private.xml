@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/header.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/menu.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/src/java/controller/AboutServlet.java</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/src/java/dao/DBConnection.java</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/includes/footer.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/sql/InsertData.sql</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/src/java/util/VNPayUtil.java</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/src/java/controller/AdminAccountsServlet.java</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/admin/restaurant-setup.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/login.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/admin/admin-sidebar.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/src/java/controller/LoginServlet.java</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/images/mon3.jpg</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/admin/print-invoice.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/src/java/controller/CartServlet.java</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/home.jsp</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/images/about.jpg</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/index.html</file>
+            <file>file:/Users/tnteheh/Workspace/NetBeans/HAH-Restaurant/web/sql/CreateTable.sql</file>
+        </group>
+    </open-files>
+</project-private>
